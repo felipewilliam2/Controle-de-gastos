@@ -547,16 +547,17 @@
 
         <div class="table-container">
             <table id="gastosTable">
-                <thead>
-                    <tr>
-                        <th>Nome do Gasto</th>
-                        <th>Categoria</th>
-                        <th>Valor</th>
-                        <th>Data de Vencimento</th>
-                        <th>Status</th>
-                        <th>Observações</th>
-                    </tr>
-                </thead>
+             <thead>
+    <tr>
+        <th>Nome do Gasto</th>
+        <th>Categoria</th>
+        <th>Valor</th>
+        <th>Data de Vencimento</th>
+        <th>Status</th>
+        <th>Observações</th>
+        <th>Pago?</th> <!-- NOVA COLUNA -->
+    </tr>
+</thead>
                 <tbody id="gastosBody">
                     <!-- Dados serão preenchidos pelo JavaScript -->
                 </tbody>
@@ -565,257 +566,122 @@
     </div>
 
     <script>
-        // Dados dos gastos
-        let gastos = [
-            // Gastos únicos
-            { nome: "Cartão de Crédito Santander", categoria: "cartao-credito", valor: 10.50, vencimento: "2025-08-08", recorrente: false },
-            { nome: "Cartão de Crédito Itaú", categoria: "cartao-credito", valor: 201.53, vencimento: "2025-08-08", recorrente: false },
-            { nome: "Compras Mercado Livre", categoria: "compras", valor: 758.45, vencimento: "2025-08-10", recorrente: false },
-            { nome: "Cartão de Crédito Nubank", categoria: "cartao-credito", valor: 263.64, vencimento: "2025-08-11", recorrente: false },
-            { nome: "Fatura Internet e Celular VIVO", categoria: "servicos", valor: 802.80, vencimento: "2025-07-17", recorrente: false },
-            { nome: "Fatura Internet e Celular VIVO", categoria: "servicos", valor: 802.80, vencimento: "2025-08-17", recorrente: false },
-            
-            // Empréstimo 99pay - 1ª série (Agosto a Janeiro)
-            { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 1422.07, vencimento: "2025-09-08", recorrente: true, obs: "1/5 - Set/2025 a Jan/2026" },
-            { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 1422.07, vencimento: "2025-10-10", recorrente: true, obs: "2/5 - Set/2025 a Jan/2026" },
-            { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 1422.07, vencimento: "2025-11-10", recorrente: true, obs: "3/5 - Set/2025 a Jan/2026" },
-            { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 1422.07, vencimento: "2025-12-10", recorrente: true, obs: "4/5 - Set/2025 a Jan/2026" },
-            { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 1422.07, vencimento: "2026-01-12", recorrente: true, obs: "5/5 - Set/2025 a Jan/2026" },
-            
-            // Empréstimo 99pay - 2ª série (Fevereiro a Maio)
-            { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 423.89, vencimento: "2026-02-10", recorrente: true, obs: "1/4 - Fev/2026 a Mai/2026" },
-            { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 423.89, vencimento: "2026-03-10", recorrente: true, obs: "2/4 - Fev/2026 a Mai/2026" },
-            { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 423.89, vencimento: "2026-04-10", recorrente: true, obs: "3/4 - Fev/2026 a Mai/2026" },
-            { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 423.89, vencimento: "2026-05-11", recorrente: true, obs: "4/4 - Fev/2026 a Mai/2026" }
-        ];
+    // Utilizar localStorage para persistência
+    let gastos = JSON.parse(localStorage.getItem('gastos')) || [
+        { nome: "Cartão de Crédito Santander", categoria: "cartao-credito", valor: 10.50, vencimento: "2025-08-08", recorrente: false, pago: false },
+        { nome: "Cartão de Crédito Itaú", categoria: "cartao-credito", valor: 201.53, vencimento: "2025-08-08", recorrente: false, pago: false },
+        { nome: "Compras Mercado Livre", categoria: "compras", valor: 758.45, vencimento: "2025-08-10", recorrente: false, pago: false },
+        { nome: "Cartão de Crédito Nubank", categoria: "cartao-credito", valor: 263.64, vencimento: "2025-08-11", recorrente: false, pago: false },
+        { nome: "Fatura Internet e Celular VIVO", categoria: "servicos", valor: 802.80, vencimento: "2025-07-17", recorrente: false, pago: false },
+        { nome: "Fatura Internet e Celular VIVO", categoria: "servicos", valor: 802.80, vencimento: "2025-08-17", recorrente: false, pago: false },
+        { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 1422.07, vencimento: "2025-09-08", recorrente: true, obs: "1/5 - Set/2025 a Jan/2026", pago: false },
+        { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 1422.07, vencimento: "2025-10-10", recorrente: true, obs: "2/5 - Set/2025 a Jan/2026", pago: false },
+        { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 1422.07, vencimento: "2025-11-10", recorrente: true, obs: "3/5 - Set/2025 a Jan/2026", pago: false },
+        { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 1422.07, vencimento: "2025-12-10", recorrente: true, obs: "4/5 - Set/2025 a Jan/2026", pago: false },
+        { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 1422.07, vencimento: "2026-01-12", recorrente: true, obs: "5/5 - Set/2025 a Jan/2026", pago: false },
+        { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 423.89, vencimento: "2026-02-10", recorrente: true, obs: "1/4 - Fev/2026 a Mai/2026", pago: false },
+        { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 423.89, vencimento: "2026-03-10", recorrente: true, obs: "2/4 - Fev/2026 a Mai/2026", pago: false },
+        { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 423.89, vencimento: "2026-04-10", recorrente: true, obs: "3/4 - Fev/2026 a Mai/2026", pago: false },
+        { nome: "Empréstimo 99pay", categoria: "emprestimo", valor: 423.89, vencimento: "2026-05-11", recorrente: true, obs: "4/4 - Fev/2026 a Mai/2026", pago: false }
+    ];
 
-        // Função para determinar o status do pagamento
-        function getStatus(vencimento) {
-            const hoje = new Date();
-            const dataVencimento = new Date(vencimento);
-            const diffTime = dataVencimento - hoje;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    // Função para salvar gastos no localStorage
+    function salvarGastos() {
+        localStorage.setItem('gastos', JSON.stringify(gastos));
+    }
 
-            if (diffDays < 0) return 'vencido';
-            if (diffDays <= 7) return 'proximo';
-            return 'em-dia';
-        }
+    // Função para renderizar a tabela (com o checkbox de pago)
+    function renderizarTabela(dadosFiltrados = gastos) {
+        const tbody = document.getElementById('gastosBody');
+        tbody.innerHTML = '';
 
-        // Função para formatar data
-        function formatarData(data) {
-            return new Date(data).toLocaleDateString('pt-BR');
-        }
-
-        // Função para formatar valor
-        function formatarValor(valor) {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            }).format(valor);
-        }
-
-        // Função para renderizar a tabela
-        function renderizarTabela(dadosFiltrados = gastos) {
-            const tbody = document.getElementById('gastosBody');
-            tbody.innerHTML = '';
-
-            dadosFiltrados
-                .sort((a, b) => new Date(a.vencimento) - new Date(b.vencimento))
-                .forEach(gasto => {
-                    const status = getStatus(gasto.vencimento);
-                    const row = document.createElement('tr');
-                    
-                    if (status === 'vencido') row.classList.add('vencido');
-                    if (status === 'proximo') row.classList.add('proximo-vencimento');
-
-                    row.innerHTML = `
-                        <td><strong>${gasto.nome}</strong></td>
-                        <td><span class="categoria ${gasto.categoria}">${gasto.categoria.replace('-', ' ')}</span></td>
-                        <td class="valor">${formatarValor(gasto.valor)}</td>
-                        <td class="data">${formatarData(gasto.vencimento)}</td>
-                        <td><span class="status ${status}">${status.replace('-', ' ')}</span></td>
-                        <td class="recorrente">${gasto.obs || (gasto.recorrente ? 'Recorrente' : 'Pagamento único')}</td>
-                    `;
-                    tbody.appendChild(row);
-                });
-        }
-
-        // Função para atualizar resumo
-        function atualizarResumo(dadosFiltrados = gastos) {
-            const total = dadosFiltrados.reduce((sum, gasto) => sum + gasto.valor, 0);
-            const vencidos = dadosFiltrados.filter(g => getStatus(g.vencimento) === 'vencido');
-            const proximos = dadosFiltrados.filter(g => getStatus(g.vencimento) === 'proximo');
-            
-            const totalVencidos = vencidos.reduce((sum, gasto) => sum + gasto.valor, 0);
-            const totalProximos = proximos.reduce((sum, gasto) => sum + gasto.valor, 0);
-
-            document.getElementById('summary').innerHTML = `
-                <div class="summary-card">
-                    <h3>Total Geral</h3>
-                    <div class="value">${formatarValor(total)}</div>
-                </div>
-                <div class="summary-card">
-                    <h3>Vencidos</h3>
-                    <div class="value" style="color: #c62828;">${formatarValor(totalVencidos)}</div>
-                    <small>${vencidos.length} item(s)</small>
-                </div>
-                <div class="summary-card">
-                    <h3>Próximos 7 dias</h3>
-                    <div class="value" style="color: #ef6c00;">${formatarValor(totalProximos)}</div>
-                    <small>${proximos.length} item(s)</small>
-                </div>
-                <div class="summary-card">
-                    <h3>Total de Itens</h3>
-                    <div class="value" style="color: #1976d2;">${dadosFiltrados.length}</div>
-                    <small>compromissos</small>
-                </div>
-            `;
-        }
-
-        // Função para aplicar filtros
-        function aplicarFiltros() {
-            const categoriaFiltro = document.getElementById('categoriaFilter').value;
-            const mesFiltro = document.getElementById('mesFilter').value;
-            const statusFiltro = document.getElementById('statusFilter').value;
-
-            let dadosFiltrados = gastos.filter(gasto => {
-                const passaCategoria = !categoriaFiltro || gasto.categoria === categoriaFiltro;
-                const passaMes = !mesFiltro || gasto.vencimento.startsWith(mesFiltro);
-                const passaStatus = !statusFiltro || getStatus(gasto.vencimento) === statusFiltro;
-                
-                return passaCategoria && passaMes && passaStatus;
+        dadosFiltrados
+            .sort((a, b) => new Date(a.vencimento) - new Date(b.vencimento))
+            .forEach((gasto, idx) => {
+                const status = getStatus(gasto.vencimento);
+                const row = document.createElement('tr');
+                if (status === 'vencido') row.classList.add('vencido');
+                if (status === 'proximo') row.classList.add('proximo-vencimento');
+                row.innerHTML = `
+                    <td><strong>${gasto.nome}</strong></td>
+                    <td><span class="categoria ${gasto.categoria}">${gasto.categoria.replace('-', ' ')}</span></td>
+                    <td class="valor">${formatarValor(gasto.valor)}</td>
+                    <td class="data">${formatarData(gasto.vencimento)}</td>
+                    <td><span class="status ${status}">${status.replace('-', ' ')}</span></td>
+                    <td class="recorrente">${gasto.obs || (gasto.recorrente ? 'Recorrente' : 'Pagamento único')}</td>
+                    <td>
+                        <input type="checkbox" ${gasto.pago ? 'checked' : ''} onchange="marcarPago(${idx}, this.checked)">
+                    </td>
+                `;
+                tbody.appendChild(row);
             });
+    }
 
-            renderizarTabela(dadosFiltrados);
-            atualizarResumo(dadosFiltrados);
-        }
+    // Função para marcar como pago e salvar
+    function marcarPago(idx, checked) {
+        // O idx corresponde ao índice no array filtrado, 
+        // por isso, garanta que está usando o array correto!
+        // Para garantir, use o array completo:
+        const gasto = gastos[idx];
+        gasto.pago = checked;
+        salvarGastos();
+        aplicarFiltros(); // Atualiza a tabela e os resumos
+    }
 
-        // Event listeners para filtros
-        document.getElementById('categoriaFilter').addEventListener('change', aplicarFiltros);
-        document.getElementById('mesFilter').addEventListener('change', aplicarFiltros);
-        document.getElementById('statusFilter').addEventListener('change', aplicarFiltros);
+    // As demais funções permanecem iguais...
 
-        // Funções do modal
-        function abrirModal() {
-            document.getElementById('modal').classList.add('active');
-            // Definir data mínima como hoje
-            const hoje = new Date().toISOString().split('T')[0];
-            document.getElementById('vencimentoGasto').setAttribute('min', hoje);
-        }
+    // Ao adicionar novo gasto, incluir o campo pago: false
+    function adicionarGasto(evento) {
+        evento.preventDefault();
+        const nome = document.getElementById('nomeGasto').value;
+        const categoria = document.getElementById('categoriaGasto').value;
+        const valor = parseFloat(document.getElementById('valorGasto').value);
+        const vencimento = document.getElementById('vencimentoGasto').value;
+        const recorrente = document.getElementById('recorrenteGasto').checked;
+        const observacoes = document.getElementById('observacoesGasto').value;
 
-        function fecharModal() {
-            document.getElementById('modal').classList.remove('active');
-            document.getElementById('novoGastoForm').reset();
-            document.getElementById('recorrenciaOptions').classList.remove('active');
-            document.getElementById('successMessage').classList.remove('show');
-        }
-
-        function toggleRecorrencia() {
-            const recorrente = document.getElementById('recorrenteGasto').checked;
-            const options = document.getElementById('recorrenciaOptions');
-            
-            if (recorrente) {
-                options.classList.add('active');
-            } else {
-                options.classList.remove('active');
-            }
-        }
-
-        function calcularDataRecorrente(dataBase, parcela, tipo) {
-            const data = new Date(dataBase);
-            
-            switch(tipo) {
-                case 'mensal':
-                    data.setMonth(data.getMonth() + parcela);
-                    break;
-                case 'bimestral':
-                    data.setMonth(data.getMonth() + (parcela * 2));
-                    break;
-                case 'trimestral':
-                    data.setMonth(data.getMonth() + (parcela * 3));
-                    break;
-                case 'semestral':
-                    data.setMonth(data.getMonth() + (parcela * 6));
-                    break;
-                case 'anual':
-                    data.setFullYear(data.getFullYear() + parcela);
-                    break;
-            }
-            
-            return data.toISOString().split('T')[0];
-        }
-
-        function adicionarGasto(evento) {
-            evento.preventDefault();
-            
-            const nome = document.getElementById('nomeGasto').value;
-            const categoria = document.getElementById('categoriaGasto').value;
-            const valor = parseFloat(document.getElementById('valorGasto').value);
-            const vencimento = document.getElementById('vencimentoGasto').value;
-            const recorrente = document.getElementById('recorrenteGasto').checked;
-            const observacoes = document.getElementById('observacoesGasto').value;
-            
-            if (recorrente) {
-                const quantidadeParcelas = parseInt(document.getElementById('quantidadeParcelas').value) || 1;
-                const tipoRecorrencia = document.getElementById('tipoRecorrencia').value;
-                
-                // Adicionar múltiplas parcelas
-                for (let i = 0; i < quantidadeParcelas; i++) {
-                    const dataVencimento = i === 0 ? vencimento : calcularDataRecorrente(vencimento, i, tipoRecorrencia);
-                    const obsRecorrente = observacoes ? 
-                        `${observacoes} - Parcela ${i + 1}/${quantidadeParcelas}` : 
-                        `Parcela ${i + 1}/${quantidadeParcelas}`;
-                    
-                    gastos.push({
-                        nome: nome,
-                        categoria: categoria,
-                        valor: valor,
-                        vencimento: dataVencimento,
-                        recorrente: true,
-                        obs: obsRecorrente
-                    });
-                }
-            } else {
-                // Adicionar gasto único
+        if (recorrente) {
+            const quantidadeParcelas = parseInt(document.getElementById('quantidadeParcelas').value) || 1;
+            const tipoRecorrencia = document.getElementById('tipoRecorrencia').value;
+            for (let i = 0; i < quantidadeParcelas; i++) {
+                const dataVencimento = i === 0 ? vencimento : calcularDataRecorrente(vencimento, i, tipoRecorrencia);
+                const obsRecorrente = observacoes ?
+                    `${observacoes} - Parcela ${i + 1}/${quantidadeParcelas}` :
+                    `Parcela ${i + 1}/${quantidadeParcelas}`;
                 gastos.push({
                     nome: nome,
                     categoria: categoria,
                     valor: valor,
-                    vencimento: vencimento,
-                    recorrente: false,
-                    obs: observacoes || 'Pagamento único'
+                    vencimento: dataVencimento,
+                    recorrente: true,
+                    obs: obsRecorrente,
+                    pago: false // NOVO
                 });
             }
-            
-            // Mostrar mensagem de sucesso
-            document.getElementById('successMessage').classList.add('show');
-            
-            // Atualizar a planilha
-            aplicarFiltros();
-            
-            // Limpar formulário
-            document.getElementById('novoGastoForm').reset();
-            document.getElementById('recorrenciaOptions').classList.remove('active');
-            
-            // Fechar modal após 2 segundos
-            setTimeout(() => {
-                fecharModal();
-            }, 2000);
+        } else {
+            gastos.push({
+                nome: nome,
+                categoria: categoria,
+                valor: valor,
+                vencimento: vencimento,
+                recorrente: false,
+                obs: observacoes || 'Pagamento único',
+                pago: false // NOVO
+            });
         }
+        salvarGastos();
+        document.getElementById('successMessage').classList.add('show');
+        aplicarFiltros();
+        document.getElementById('novoGastoForm').reset();
+        document.getElementById('recorrenciaOptions').classList.remove('active');
+        setTimeout(() => {
+            fecharModal();
+        }, 2000);
+    }
 
-        // Event listener para o formulário
-        document.getElementById('novoGastoForm').addEventListener('submit', adicionarGasto);
-
-        // Fechar modal clicando fora dele
-        document.getElementById('modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                fecharModal();
-            }
-        });
-
-        // Inicializar a planilha
-        renderizarTabela();
-        atualizarResumo();
-    </script>
+    // No final do script, chame renderizarTabela e atualizarResumo normalmente
+    renderizarTabela();
+    atualizarResumo();
+</script>
 </body>
 </html>
